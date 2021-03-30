@@ -2,16 +2,31 @@ const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
-  entry: './src/index.js',
+  entry: ['core-js/stable', './src/js/index.js'],
+  target: ['web', 'es5'],
   module: {
     rules: [
       {
         test: /\.js$/,
+        include: [
+          path.resolve(__dirname, 'src/js')
+        ],
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['@babel/preset-env']
+            presets: [
+              [
+                '@babel/env', 
+                {
+                  useBuiltIns: 'usage', 
+                  corejs: { version: 3, proposals: true },
+                  targets: {
+                    browsers: ['last 5 versions', 'ie >= 11']
+                }
+                }
+              ]
+            ]
           }
         }
       },
@@ -34,5 +49,5 @@ module.exports = {
     filename: '[name].bundle.js',
     path: path.resolve(__dirname, 'dist'),
     clean: true
-  },
+  }
 }
